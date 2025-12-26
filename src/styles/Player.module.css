@@ -1,0 +1,39 @@
+.player {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 104px;
+  overflow: hidden;
+  box-shadow: 0 -14px 40px rgba(0, 0, 0, 0.7);
+  background: rgba(12, 12, 18, 0.92);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 40;
+  animation: playerIn 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+@keyframes playerIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .player {
+    height: 118px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .player {
+    animation: none;
+  }
+}

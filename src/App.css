@@ -1,0 +1,114 @@
+.app {
+  min-height: 100vh;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at top left, rgba(190, 190, 255, 0.14), transparent 50%),
+    radial-gradient(circle at bottom right, rgba(255, 120, 180, 0.14), transparent 55%),
+    #050509;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.app-main {
+  padding-top: 0;
+  padding-inline: 0;
+  padding-bottom: 40px;
+}
+
+.app-main-with-player {
+  padding-bottom: 140px;
+}
+
+.main-column {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-inline: 64px;
+  animation: mainColumnIn 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes mainColumnIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.status {
+  margin-top: 120px;
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+.status-error {
+  color: #ff6b6b;
+}
+
+.artists-section {
+  margin-top: 32px;
+}
+
+.artists-section h2 {
+  font-size: 1.3rem;
+  margin-bottom: 16px;
+}
+
+.artists-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+}
+
+.artist-card {
+  text-align: center;
+  font-size: 0.9rem;
+  transition: transform 0.18s ease, filter 0.18s ease;
+  will-change: transform, filter;
+}
+
+.artist-card:hover {
+  transform: translateY(-2px);
+  filter: drop-shadow(0 18px 35px rgba(0, 0, 0, 0.35));
+}
+
+.artist-card img {
+  width: 100%;
+  border-radius: 999px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  margin-bottom: 8px;
+  transition: transform 0.26s ease, filter 0.26s ease;
+}
+
+.artist-card:hover img {
+  transform: scale(1.03);
+  filter: saturate(1.08) contrast(1.02);
+}
+
+@media (max-width: 768px) {
+  .app-main {
+    padding-inline: 16px;
+    padding-bottom: 32px;
+  }
+
+  .app-main-with-player {
+    padding-bottom: 158px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .main-column {
+    animation: none;
+  }
+
+  .artist-card {
+    transition: none;
+  }
+
+  .artist-card img {
+    transition: none;
+  }
+}
