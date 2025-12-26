@@ -3,6 +3,7 @@ import type { FC, ChangeEvent, KeyboardEvent } from 'react'
 import styles from '../styles/Navbar.module.css'
 import logo from '../assets/logo.png'
 import searchIcon from '../assets/icons/search.svg'
+import SignupModal from './SignupModal'
 import type { DeezerTrack } from '../services/deezerApi'
 import { searchTracks } from '../services/deezerApi'
 
@@ -18,6 +19,7 @@ const Navbar: FC<NavbarProps> = ({ activeTab, onTabChange, onSearch }) => {
   const [searchValue, setSearchValue] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [suggestions, setSuggestions] = useState<DeezerTrack[]>([])
+  const [isSignupOpen, setIsSignupOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement | null>(null)
   const searchAreaRef = useRef<HTMLDivElement | null>(null)
 
@@ -206,11 +208,17 @@ const Navbar: FC<NavbarProps> = ({ activeTab, onTabChange, onSearch }) => {
             Álbuns
           </button>
 
-          <button type="button" className={styles.ctaButton}>
+          <button
+            type="button"
+            className={styles.ctaButton}
+            onClick={() => setIsSignupOpen(true)}
+          >
             <span>Inscreva-se já!</span>
           </button>
         </nav>
       </div>
+
+      <SignupModal isOpen={isSignupOpen} onClose={() => setIsSignupOpen(false)} />
     </header>
   )
 }
