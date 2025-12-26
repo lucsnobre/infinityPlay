@@ -205,6 +205,10 @@ const Navbar: FC<NavbarProps> = ({ activeTab, onTabChange, onSearch }) => {
           >
             Álbuns
           </button>
+
+          <button type="button" className={styles.ctaButton}>
+            <span>Inscreva-se já!</span>
+          </button>
         </nav>
       </div>
     </header>

@@ -291,6 +291,65 @@
   color: #111111;
 }
 
+.ctaButton {
+  position: relative;
+  padding: 12px 28px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 120, 180, 0.92),
+    rgba(190, 190, 255, 0.92)
+  );
+  color: #0d0d14;
+  font-size: 1.08rem;
+  font-weight: 650;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+  transition:
+    transform 0.15s ease,
+    filter 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.ctaButton::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.52), transparent 55%);
+  opacity: 0.35;
+  transform: translateX(-35%);
+  transition:
+    opacity 0.2s ease,
+    transform 0.25s ease;
+}
+
+.ctaButton span {
+  position: relative;
+  z-index: 1;
+}
+
+.ctaButton:hover {
+  transform: translateY(-1px);
+  filter: saturate(1.05) contrast(1.03);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+}
+
+.ctaButton:hover::before {
+  opacity: 0.6;
+  transform: translateX(0);
+}
+
+.ctaButton:active {
+  transform: translateY(0);
+}
+
+.ctaButton:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.78);
+  outline-offset: 2px;
+}
+
 @media (max-width: 768px) {
   .navbar {
     padding: 12px 16px;
@@ -304,6 +363,8 @@
 
   .tabs {
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
   }
 }
 
