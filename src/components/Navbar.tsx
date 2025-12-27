@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { FC, ChangeEvent, KeyboardEvent } from 'react'
 import styles from '../styles/Navbar.module.css'
 import logo from '../assets/logo.png'
+import profileIcon from '../assets/icons/profile.svg'
 import searchIcon from '../assets/icons/search.svg'
 import SignupModal from './SignupModal'
 import type { DeezerTrack } from '../services/deezerApi'
@@ -20,8 +21,50 @@ const Navbar: FC<NavbarProps> = ({ activeTab, onTabChange, onSearch }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [suggestions, setSuggestions] = useState<DeezerTrack[]>([])
   const [isSignupOpen, setIsSignupOpen] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement | null>(null)
   const searchAreaRef = useRef<HTMLDivElement | null>(null)
+  const profileMenuRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    try {
+      setIsAuthenticated(Boolean(window.localStorage.getItem('authToken')))
+    } catch {
+      setIsAuthenticated(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!isProfileMenuOpen) return
+
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as Node | null
+      if (!target) return
+      if (profileMenuRef.current && !profileMenuRef.current.contains(target)) {
+        setIsProfileMenuOpen(false)
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsProfileMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isProfileMenuOpen])
+
+  function handleProfileMenuItemClick(path: string) {
+    setIsProfileMenuOpen(false)
+    window.location.href = path
+  }
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
     setSearchValue(event.target.value)
@@ -233,17 +276,73 @@ const Navbar: FC<NavbarProps> = ({ activeTab, onTabChange, onSearch }) => {
             Álbuns
           </button>
 
-          <button
-            type="button"
-            className={styles.ctaButton}
-            onClick={() => setIsSignupOpen(true)}
-          >
-            <span>Inscreva-se já!</span>
-          </button>
+          {isAuthenticated ? (
+            <div ref={profileMenuRef} className={styles.profileMenuWrapper}>
+              <button
+                type="button"
+                className={styles.profileButton}
+                aria-label="Perfil"
+                aria-haspopup="menu"
+                aria-expanded={isProfileMenuOpen}
+                onClick={() => setIsProfileMenuOpen((previous) => !previous)}
+              >
+                <img src={profileIcon} alt="" className={styles.profileIcon} />
+              </button>
+
+              {isProfileMenuOpen && (
+                <div className={styles.profileMenu} role="menu" aria-label="Menu do perfil">
+                  <button
+                    type="button"
+                    className={styles.profileMenuItem}
+                    role="menuitem"
+                    onClick={() => handleProfileMenuItemClick('/perfil')}
+                  >
+                    Ver perfil
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.profileMenuItem}
+                    role="menuitem"
+                    onClick={() => handleProfileMenuItemClick('/salas')}
+                  >
+                    Ver salas de música
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.profileMenuItem}
+                    role="menuitem"
+                    onClick={() => handleProfileMenuItemClick('/amigos')}
+                  >
+                    Amigos
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.profileMenuItem}
+                    role="menuitem"
+                    onClick={() => handleProfileMenuItemClick('/conquistas')}
+                  >
+                    Conquistas
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              type="button"
+              className={styles.ctaButton}
+              onClick={() => setIsSignupOpen(true)}
+            >
+              <span>Inscreva-se já!</span>
+            </button>
+          )}
         </nav>
       </div>
 
-      <SignupModal isOpen={isSignupOpen} onClose={() => setIsSignupOpen(false)} />
+      <SignupModal
+        isOpen={isSignupOpen}
+        onClose={() => setIsSignupOpen(false)}
+        onSignupSuccess={() => setIsAuthenticated(true)}
+      />
     </header>
   )
 }

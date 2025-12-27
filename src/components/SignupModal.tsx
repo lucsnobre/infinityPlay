@@ -8,6 +8,7 @@ import { registerUser } from '../services/backendApi'
 interface SignupModalProps {
   isOpen: boolean
   onClose: () => void
+  onSignupSuccess?: () => void
 }
 
 type SignupFormData = {
@@ -17,7 +18,7 @@ type SignupFormData = {
   nickname: string
 }
 
-const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose }) => {
+const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose, onSignupSuccess }) => {
   const [form, setForm] = useState<SignupFormData>({
     username: '',
     email: '',
@@ -27,6 +28,7 @@ const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose }) => {
 
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const isSubmitDisabled = useMemo(() => {
     return (
@@ -104,6 +106,7 @@ const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose }) => {
           password,
           nickname,
         })
+        onSignupSuccess?.()
         onClose()
       } catch (err) {
         const message =
@@ -164,7 +167,7 @@ const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose }) => {
                   username: event.target.value,
                 }))
               }
-              placeholder="ex: lucsnobre"
+              placeholder="Insira seu nome de usuário"
               autoComplete="username"
             />
           </label>
@@ -198,26 +201,102 @@ const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose }) => {
                   email: event.target.value,
                 }))
               }
-              placeholder="seuemail@exemplo.com"
+              placeholder="Insira seu e-mail"
               autoComplete="email"
             />
           </label>
 
           <label className={styles.field}>
             <span className={styles.label}>Senha</span>
-            <input
-              type="password"
-              className={styles.input}
-              value={form.password}
-              onChange={(event) =>
-                setForm((previous) => ({
-                  ...previous,
-                  password: event.target.value,
-                }))
-              }
-              placeholder="********"
-              autoComplete="new-password"
-            />
+            <div className={styles.passwordRow}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                className={`${styles.input} ${styles.passwordInput}`}
+                value={form.password}
+                onChange={(event) =>
+                  setForm((previous) => ({
+                    ...previous,
+                    password: event.target.value,
+                  }))
+                }
+                placeholder="Insira sua senha"
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                className={styles.passwordToggle}
+                onClick={() => setShowPassword((previous) => !previous)}
+                aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+              >
+                {showPassword ? (
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="20"
+                    height="20"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path
+                      d="M10.7 5.1c.43-.07.86-.1 1.3-.1 7 0 10 7 10 7a19.7 19.7 0 0 1-3.3 4.7"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M6.6 6.6A19.7 19.7 0 0 0 2 12s3 7 10 7c1.65 0 3.1-.4 4.3-1"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M14.1 9.9a3 3 0 0 1 .82 2.1 3 3 0 0 1-3 3 3 3 0 0 1-2.1-.82"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M2 2l20 20"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="20"
+                    height="20"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path
+                      d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                )}
+              </button>
+            </div>
           </label>
 
           {error && <p className={styles.error}>{error}</p>}
