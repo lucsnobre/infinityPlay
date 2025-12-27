@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { FC, FormEvent } from 'react'
 import { createPortal } from 'react-dom'
 import styles from '../styles/SignupModal.module.css'
+import logo from '../assets/logo.png'
 import { registerUser } from '../services/backendApi'
 
 interface SignupModalProps {
@@ -115,6 +116,11 @@ const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose }) => {
     })()
   }
 
+  function handleLoginClick() {
+    onClose()
+    window.location.href = '/login'
+  }
+
   if (!isOpen) return null
 
   return createPortal(
@@ -126,20 +132,22 @@ const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose }) => {
       onMouseDown={onClose}
     >
       <div className={styles.modal} onMouseDown={(event) => event.stopPropagation()}>
-        <button
-          type="button"
-          className={styles.closeButton}
-          onClick={onClose}
-          aria-label="Fechar"
-        >
-          ×
-        </button>
-
         <div className={styles.header}>
-          <h2 className={styles.title}>Criar conta</h2>
-          <p className={styles.subtitle}>
-            Entre no InfinityPlay e comece a montar seu perfil musical.
-          </p>
+          <div className={styles.headerRow}>
+            <div className={styles.headerTop}>
+              <img src={logo} alt="InfinityPlay" className={styles.logo} />
+              <h2 className={styles.title}>Criar conta</h2>
+            </div>
+
+            <button
+              type="button"
+              className={styles.closeButton}
+              onClick={onClose}
+              aria-label="Fechar"
+            >
+              ×
+            </button>
+          </div>
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -221,6 +229,17 @@ const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose }) => {
           >
             {isSubmitting ? 'Criando conta...' : 'Criar conta'}
           </button>
+
+          <p className={styles.loginPrompt}>
+            Já tem uma conta?{' '}
+            <button
+              type="button"
+              className={styles.loginLink}
+              onClick={handleLoginClick}
+            >
+              Fazer login
+            </button>
+          </p>
         </form>
       </div>
     </div>,

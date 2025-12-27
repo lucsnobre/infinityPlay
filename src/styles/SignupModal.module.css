@@ -64,26 +64,23 @@
 }
 
 .closeButton {
-  position: absolute;
-  top: 14px;
-  right: 14px;
   width: 42px;
   height: 42px;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  background: transparent;
   color: rgba(255, 255, 255, 0.92);
   display: grid;
   place-items: center;
+  font-size: 32px;
+  line-height: 1;
   cursor: pointer;
-  z-index: 2;
-  transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+  flex-shrink: 0;
+  transition: transform 0.16s ease, opacity 0.16s ease;
 }
 
 .closeButton:hover {
   transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  opacity: 0.8;
 }
 
 .closeButton:active {
@@ -98,8 +95,28 @@
 .header {
   position: relative;
   z-index: 1;
-  padding-right: 52px;
   margin-bottom: 18px;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.headerTop {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+.logo {
+  height: 84px;
+  width: auto;
+  display: block;
+  flex-shrink: 0;
 }
 
 .title {
@@ -206,6 +223,35 @@
   opacity: 0.55;
   filter: grayscale(0.1);
   box-shadow: none;
+}
+
+.loginPrompt {
+  margin: 10px 0 0;
+  text-align: center;
+  font-size: 0.92rem;
+  opacity: 0.88;
+}
+
+.loginLink {
+  border: none;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  color: rgba(255, 255, 255, 0.95);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity 0.16s ease;
+}
+
+.loginLink:hover {
+  opacity: 0.8;
+}
+
+.loginLink:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.75);
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 
 .submitButton:focus-visible {
