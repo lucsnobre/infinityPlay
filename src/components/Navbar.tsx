@@ -38,6 +38,22 @@ const Navbar: FC<NavbarProps> = ({ activeTab, onTabChange, onSearch }) => {
     }
   }
 
+  function handleSearchContainerClick() {
+    if (isSearchOpen) return
+    setIsSearchOpen(true)
+    window.setTimeout(() => {
+      inputRef.current?.focus()
+    }, 0)
+  }
+
+  function handleSearchContainerKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    if (isSearchOpen) return
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      handleSearchContainerClick()
+    }
+  }
+
   function handleSearchIconClick() {
     if (!isSearchOpen) {
       setIsSearchOpen(true)
@@ -122,11 +138,20 @@ const Navbar: FC<NavbarProps> = ({ activeTab, onTabChange, onSearch }) => {
 
       <div className={styles.right}>
         <div ref={searchAreaRef} className={styles.searchWrapper}>
-          <div className={searchContainerClassName}>
+          <div
+            className={searchContainerClassName}
+            onClick={handleSearchContainerClick}
+            onKeyDown={handleSearchContainerKeyDown}
+            role="button"
+            tabIndex={isSearchOpen ? -1 : 0}
+          >
             <button
               type="button"
               className={styles.searchButton}
-              onClick={handleSearchIconClick}
+              onClick={(event) => {
+                event.stopPropagation()
+                handleSearchIconClick()
+              }}
             >
               <img
                 src={searchIcon}

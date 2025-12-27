@@ -12,6 +12,12 @@ export default defineConfig({
         secure: true,
         rewrite: (path) => path.replace(/^\/deezer-api/, ''),
       },
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '/v1'),
+      },
     },
   },
 })

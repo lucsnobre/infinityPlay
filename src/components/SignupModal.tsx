@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { FC, FormEvent } from 'react'
 import { createPortal } from 'react-dom'
 import styles from '../styles/SignupModal.module.css'
+import { registerUser } from '../services/backendApi'
 
 interface SignupModalProps {
   isOpen: boolean
@@ -24,6 +25,7 @@ const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose }) => {
   })
 
   const [error, setError] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const isSubmitDisabled = useMemo(() => {
     return (
@@ -90,8 +92,27 @@ const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose }) => {
       return
     }
 
-    console.log('signup_submit', { username, email, nickname })
-    onClose()
+    setIsSubmitting(true)
+    setError(null)
+
+    void (async () => {
+      try {
+        await registerUser({
+          username,
+          email,
+          password,
+          nickname,
+        })
+        onClose()
+      } catch (err) {
+        const message =
+          err instanceof Error
+            ? err.message
+            : 'Não foi possível criar sua conta agora.'
+        setError(message)
+        setIsSubmitting(false)
+      }
+    })()
   }
 
   if (!isOpen) return null
@@ -196,9 +217,9 @@ const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose }) => {
           <button
             type="submit"
             className={styles.submitButton}
-            disabled={isSubmitDisabled}
+            disabled={isSubmitDisabled || isSubmitting}
           >
-            Criar conta
+            {isSubmitting ? 'Criando conta...' : 'Criar conta'}
           </button>
         </form>
       </div>
