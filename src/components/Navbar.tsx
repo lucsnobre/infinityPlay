@@ -66,6 +66,16 @@ const Navbar: FC<NavbarProps> = ({ activeTab, onTabChange, onSearch }) => {
     window.location.href = path
   }
 
+  function handleLogout() {
+    setIsProfileMenuOpen(false)
+    try {
+      window.localStorage.removeItem('authToken')
+    } catch {
+      // ignore storage errors
+    }
+    setIsAuthenticated(false)
+  }
+
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
     setSearchValue(event.target.value)
   }
@@ -322,6 +332,15 @@ const Navbar: FC<NavbarProps> = ({ activeTab, onTabChange, onSearch }) => {
                     onClick={() => handleProfileMenuItemClick('/conquistas')}
                   >
                     Conquistas
+                  </button>
+                  <div className={styles.profileMenuSeparator} />
+                  <button
+                    type="button"
+                    className={`${styles.profileMenuItem} ${styles.logoutItem}`}
+                    role="menuitem"
+                    onClick={handleLogout}
+                  >
+                    Sair
                   </button>
                 </div>
               )}

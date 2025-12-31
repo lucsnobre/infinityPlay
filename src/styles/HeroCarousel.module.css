@@ -87,8 +87,14 @@
   margin-top: 40px;
   overflow-x: auto;
   padding-bottom: 4px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
   animation: heroThumbsIn 650ms cubic-bezier(0.16, 1, 0.3, 1) 170ms both;
   will-change: transform, opacity;
+}
+
+.thumbnails::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Opera */
 }
 
 .thumbnail {

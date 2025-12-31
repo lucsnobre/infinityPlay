@@ -147,6 +147,12 @@
 .form {
   overflow: auto;
   padding-right: 2px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.form::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Opera */
 }
 
 .field {
