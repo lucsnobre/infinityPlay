@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { FC } from 'react'
 import styles from '../styles/HeroCarousel.module.css'
+import { getDominantColor } from '../services/deezerApi'
 
 export type HeroItemType = 'track' | 'album'
 
@@ -16,11 +17,12 @@ export interface HeroItem {
 interface HeroCarouselProps {
   items: HeroItem[]
   onPlay: (type: HeroItemType, id: number) => void
+  onColorChange?: (color: string) => void
 }
 
 const AUTO_SLIDE_INTERVAL_MS = 8000
 
-const HeroCarousel: FC<HeroCarouselProps> = ({ items, onPlay }) => {
+const HeroCarousel: FC<HeroCarouselProps> = ({ items, onPlay, onColorChange }) => {
   const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {
@@ -34,6 +36,18 @@ const HeroCarousel: FC<HeroCarouselProps> = ({ items, onPlay }) => {
       window.clearInterval(intervalId)
     }
   }, [items.length])
+
+  // Extrair cor quando a imagem atual muda
+  useEffect(() => {
+    if (!items.length || !onColorChange) return
+
+    const current = items[currentIndex]
+    void getDominantColor(current.coverImage)
+      .then(onColorChange)
+      .catch(() => {
+        // Ignorar erros e manter cor atual
+      })
+  }, [currentIndex, items, onColorChange])
 
   if (!items.length) {
     return null

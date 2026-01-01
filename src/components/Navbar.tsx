@@ -12,11 +12,12 @@ export type Tab = 'home' | 'tracks' | 'albums'
 
 interface NavbarProps {
   activeTab: Tab
+  dominantColor?: string
   onTabChange: (tab: Tab) => void
   onSearch: (term: string) => void
 }
 
-const Navbar: FC<NavbarProps> = ({ activeTab, onTabChange, onSearch }) => {
+const Navbar: FC<NavbarProps> = ({ activeTab, dominantColor, onTabChange, onSearch }) => {
   const [searchValue, setSearchValue] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [suggestions, setSuggestions] = useState<DeezerTrack[]>([])
@@ -46,8 +47,8 @@ const Navbar: FC<NavbarProps> = ({ activeTab, onTabChange, onSearch }) => {
       }
     }
 
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
+    function handleKeyDown(event: Event) {
+      if (event instanceof KeyboardEvent && event.key === 'Escape') {
         setIsProfileMenuOpen(false)
       }
     }
@@ -349,6 +350,9 @@ const Navbar: FC<NavbarProps> = ({ activeTab, onTabChange, onSearch }) => {
             <button
               type="button"
               className={styles.ctaButton}
+              style={{ 
+                '--dynamic-color': dominantColor
+              } as React.CSSProperties}
               onClick={() => setIsSignupOpen(true)}
             >
               <span>Inscreva-se já!</span>

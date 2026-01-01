@@ -60,6 +60,8 @@ function App() {
   const [albumLoading, setAlbumLoading] = useState(false)
   const [albumError, setAlbumError] = useState<string | null>(null)
 
+  const [dominantColor, setDominantColor] = useState('#6366f1') // Cor inicial
+
   useEffect(() => {
     async function loadInitial() {
       try {
@@ -172,6 +174,7 @@ function App() {
     <div className="app">
       <Navbar
         activeTab={activeTab}
+        dominantColor={dominantColor}
         onTabChange={(tab) => {
           setActiveTab(tab)
           setSearchTerm('')
@@ -218,6 +221,7 @@ function App() {
                     <HeroCarousel
                       items={heroItems}
                       onPlay={handlePlayFromHero}
+                      onColorChange={setDominantColor}
                     />
 
                     <div className="main-column">
