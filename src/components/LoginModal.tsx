@@ -3,29 +3,24 @@ import type { FC, FormEvent } from 'react'
 import { createPortal } from 'react-dom'
 import styles from '../styles/SignupModal.module.css'
 import logo from '../assets/logo.png'
-import { registerUser } from '../services/backendApi'
 
-interface SignupModalProps {
+interface LoginModalProps {
   isOpen: boolean
   onClose: () => void
-  onSignupSuccess?: () => void
+  onLoginSuccess: () => void
 }
 
-type SignupFormData = {
-  username: string
+type LoginFormData = {
   email: string
   password: string
-  nickname: string
 }
 
-const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose, onSignupSuccess }) => {
+const LoginModal: FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess }) => {
   const [shouldRender, setShouldRender] = useState(isOpen)
   const [isClosing, setIsClosing] = useState(false)
-  const [form, setForm] = useState<SignupFormData>({
-    username: '',
+  const [form, setForm] = useState<LoginFormData>({
     email: '',
     password: '',
-    nickname: '',
   })
 
   const [error, setError] = useState<string | null>(null)
@@ -33,13 +28,8 @@ const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose, onSignupSuccess })
   const [showPassword, setShowPassword] = useState(false)
 
   const isSubmitDisabled = useMemo(() => {
-    return (
-      !form.username.trim() ||
-      !form.email.trim() ||
-      !form.password.trim() ||
-      !form.nickname.trim()
-    )
-  }, [form.email, form.nickname, form.password, form.username])
+    return !form.email.trim() || !form.password.trim()
+  }, [form.email, form.password])
 
   useEffect(() => {
     if (isOpen) {
@@ -94,7 +84,7 @@ const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose, onSignupSuccess })
     }
   }, [isOpen])
 
-  function handleInputChange(field: keyof SignupFormData, value: string) {
+  function handleInputChange(field: keyof LoginFormData, value: string) {
     setForm(prev => ({ ...prev, [field]: value }))
   }
 
@@ -106,34 +96,32 @@ const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose, onSignupSuccess })
     setError(null)
 
     try {
-      await registerUser({
-        username: form.username.trim(),
-        email: form.email.trim(),
-        password: form.password,
-        nickname: form.nickname.trim(),
-      })
-
-      onSignupSuccess?.()
+      // Simular login - em produção, aqui seria a chamada à API de login
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      // Simular token de autenticação
+      window.localStorage.setItem('authToken', 'mock-login-token')
+      
+      onLoginSuccess()
       onClose()
-
+      
       // Reset form
       setForm({
-        username: '',
         email: '',
         password: '',
-        nickname: '',
       })
       setShowPassword(false)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao criar conta')
+      setError(err instanceof Error ? err.message : 'Erro ao fazer login')
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  function handleLoginClick() {
+  function handleSignupClick() {
     onClose()
-    window.location.href = '/login'
+    // Aqui você poderia passar uma prop para abrir o signup modal
+    // Por enquanto, apenas fecha o login
   }
 
   if (!shouldRender) return null
@@ -151,7 +139,7 @@ const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose, onSignupSuccess })
         <div className={styles.headerRow}>
           <div className={styles.headerTop}>
             <img src={logo} alt="InfinityPlay" className={styles.logo} />
-            <h2 className={styles.title}>Criar conta</h2>
+            <h2 className={styles.title}>Entrar</h2>
           </div>
           <button
             type="button"
@@ -165,62 +153,32 @@ const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose, onSignupSuccess })
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
-            <label htmlFor="username" className={styles.label}>
-              Nome de usuário
+            <label htmlFor="login-email" className={styles.label}>
+              Email ou usuário
             </label>
             <input
-              id="username"
+              id="login-email"
               type="text"
-              value={form.username}
-              onChange={(e) => handleInputChange('username', e.target.value)}
-              className={styles.input}
-              placeholder="Digite seu nome de usuário"
-              required
-            />
-          </div>
-
-          <div className={styles.field}>
-            <label htmlFor="email" className={styles.label}>
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
               value={form.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
               className={styles.input}
-              placeholder="seu@email.com"
+              placeholder="Digite seu email ou usuário"
               required
             />
           </div>
 
           <div className={styles.field}>
-            <label htmlFor="nickname" className={styles.label}>
-              Apelido
-            </label>
-            <input
-              id="nickname"
-              type="text"
-              value={form.nickname}
-              onChange={(e) => handleInputChange('nickname', e.target.value)}
-              className={styles.input}
-              placeholder="Como quer ser chamado"
-              required
-            />
-          </div>
-
-          <div className={styles.field}>
-            <label htmlFor="password" className={styles.label}>
+            <label htmlFor="login-password" className={styles.label}>
               Senha
             </label>
             <div className={styles.passwordRow}>
               <input
-                id="password"
+                id="login-password"
                 type={showPassword ? 'text' : 'password'}
                 value={form.password}
                 onChange={(e) => handleInputChange('password', e.target.value)}
                 className={`${styles.input} ${styles.passwordInput}`}
-                placeholder="Crie uma senha forte"
+                placeholder="Digite sua senha"
                 required
               />
               <button
@@ -232,63 +190,47 @@ const SignupModal: FC<SignupModalProps> = ({ isOpen, onClose, onSignupSuccess })
                 {showPassword ? (
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                    <line x1="1" y1="1" x2="23" y2="23" strokeLinecap="round" strokeLinejoin="round"/>
+                    <line x1="1" y1="1" x2="23" y2="23"/>
                   </svg>
                 ) : (
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="20"
-                    height="20"
-                    aria-hidden="true"
-                    focusable="false"
-                  >
-                    <path
-                      d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
                   </svg>
                 )}
               </button>
             </div>
           </div>
 
-          {error && <p className={styles.error}>{error}</p>}
+          {error && (
+            <div className={styles.error}>
+              {error}
+            </div>
+          )}
 
           <button
             type="submit"
             className={styles.submitButton}
             disabled={isSubmitDisabled || isSubmitting}
           >
-            {isSubmitting ? 'Criando conta...' : 'Criar conta'}
+            {isSubmitting ? 'Entrando...' : 'Entrar'}
           </button>
-
-          <p className={styles.loginPrompt}>
-            Já tem uma conta?{' '}
-            <button
-              type="button"
-              className={styles.loginLink}
-              onClick={handleLoginClick}
-            >
-              Fazer login
-            </button>
-          </p>
         </form>
+
+        <div className={styles.loginPrompt}>
+          <span>Ainda não tem uma conta?</span>
+          <button 
+            type="button" 
+            className={styles.loginLink}
+            onClick={handleSignupClick}
+          >
+            Criar conta
+          </button>
+        </div>
       </div>
     </div>,
-    document.body,
+    document.body
   )
 }
 
-export default SignupModal
+export default LoginModal

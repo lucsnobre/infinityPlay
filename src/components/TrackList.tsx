@@ -6,9 +6,10 @@ interface TrackListProps {
   title: string
   tracks: DeezerTrack[]
   onSelect: (id: number) => void
+  onTrackClick?: (track: DeezerTrack) => void
 }
 
-const TrackList: FC<TrackListProps> = ({ title, tracks, onSelect }) => {
+const TrackList: FC<TrackListProps> = ({ title, tracks, onSelect, onTrackClick }) => {
   if (!tracks.length) {
     return (
       <section className={styles.section}>
@@ -28,7 +29,7 @@ const TrackList: FC<TrackListProps> = ({ title, tracks, onSelect }) => {
             key={track.id}
             type="button"
             className={styles.card}
-            onClick={() => onSelect(track.id)}
+            onClick={() => onTrackClick ? onTrackClick(track) : onSelect(track.id)}
             style={{ ['--stagger' as any]: Math.min(index, 12) } as CSSProperties}
           >
             <div className={styles.coverWrapper}>

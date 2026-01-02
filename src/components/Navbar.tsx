@@ -5,6 +5,7 @@ import logo from '../assets/logo.png'
 import profileIcon from '../assets/icons/profile.svg'
 import searchIcon from '../assets/icons/search.svg'
 import SignupModal from './SignupModal'
+import LoginModal from './LoginModal'
 import type { DeezerTrack } from '../services/deezerApi'
 import { searchTracks } from '../services/deezerApi'
 
@@ -15,18 +16,23 @@ interface NavbarProps {
   dominantColor?: string
   onTabChange: (tab: Tab) => void
   onSearch: (term: string) => void
+  onNavigate?: (path: string) => void
+  forceCompact?: boolean
 }
 
-const Navbar: FC<NavbarProps> = ({ activeTab, dominantColor, onTabChange, onSearch }) => {
+const Navbar: FC<NavbarProps> = ({ activeTab, dominantColor, onTabChange, onSearch, onNavigate, forceCompact }) => {
   const [searchValue, setSearchValue] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [suggestions, setSuggestions] = useState<DeezerTrack[]>([])
   const [isSignupOpen, setIsSignupOpen] = useState(false)
+  const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement | null>(null)
   const searchAreaRef = useRef<HTMLDivElement | null>(null)
   const profileMenuRef = useRef<HTMLDivElement | null>(null)
+
+  const isCompact = Boolean(forceCompact) || activeTab === 'tracks' || activeTab === 'albums'
 
   useEffect(() => {
     try {
@@ -64,6 +70,10 @@ const Navbar: FC<NavbarProps> = ({ activeTab, dominantColor, onTabChange, onSear
 
   function handleProfileMenuItemClick(path: string) {
     setIsProfileMenuOpen(false)
+    if (onNavigate) {
+      onNavigate(path)
+      return
+    }
     window.location.href = path
   }
 
@@ -75,6 +85,18 @@ const Navbar: FC<NavbarProps> = ({ activeTab, dominantColor, onTabChange, onSear
       // ignore storage errors
     }
     setIsAuthenticated(false)
+  }
+
+  function handleLoginClick() {
+    setIsLoginOpen(true)
+  }
+
+  function handleLoginSuccess() {
+    setIsAuthenticated(true)
+  }
+
+  function handleLoginClose() {
+    setIsLoginOpen(false)
   }
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -185,7 +207,7 @@ const Navbar: FC<NavbarProps> = ({ activeTab, dominantColor, onTabChange, onSear
   }
 
   return (
-    <header className={styles.navbar}>
+    <header className={`${styles.navbar} ${isCompact ? styles.compact : ''}`}>
       <div className={styles.left}>
         <img src={logo} alt="Logo" className={styles.logo} />
       </div>
@@ -347,16 +369,25 @@ const Navbar: FC<NavbarProps> = ({ activeTab, dominantColor, onTabChange, onSear
               )}
             </div>
           ) : (
-            <button
-              type="button"
-              className={styles.ctaButton}
-              style={{ 
-                '--dynamic-color': dominantColor
-              } as React.CSSProperties}
-              onClick={() => setIsSignupOpen(true)}
-            >
-              <span>Inscreva-se já!</span>
-            </button>
+            <div className={styles.authButtons}>
+              <button
+                type="button"
+                className={styles.loginButton}
+                onClick={handleLoginClick}
+              >
+                Entrar
+              </button>
+              <button
+                type="button"
+                className={styles.ctaButton}
+                style={{ 
+                  '--dynamic-color': dominantColor
+                } as React.CSSProperties}
+                onClick={() => setIsSignupOpen(true)}
+              >
+                <span>Inscreva-se já!</span>
+              </button>
+            </div>
           )}
         </nav>
       </div>
@@ -365,6 +396,12 @@ const Navbar: FC<NavbarProps> = ({ activeTab, dominantColor, onTabChange, onSear
         isOpen={isSignupOpen}
         onClose={() => setIsSignupOpen(false)}
         onSignupSuccess={() => setIsAuthenticated(true)}
+      />
+
+      <LoginModal
+        isOpen={isLoginOpen}
+        onClose={handleLoginClose}
+        onLoginSuccess={handleLoginSuccess}
       />
     </header>
   )

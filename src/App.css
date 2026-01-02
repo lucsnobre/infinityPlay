@@ -21,7 +21,7 @@
 .main-column {
   max-width: 1120px;
   margin: 0 auto;
-  padding-inline: 64px;
+  padding-inline: clamp(16px, 6vw, 64px);
   animation: mainColumnIn 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -92,6 +92,10 @@
   .app-main {
     padding-inline: 16px;
     padding-bottom: 32px;
+  }
+
+  .main-column {
+    padding-inline: 16px;
   }
 
   .app-main-with-player {

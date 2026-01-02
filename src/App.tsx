@@ -8,6 +8,7 @@ import HeroCarousel, {
 import TrackList from './components/TrackList'
 import AlbumList from './components/AlbumList'
 import AlbumDetailPage from './components/AlbumDetailPage'
+import ProfilePage from './components/ProfilePage'
 import Player, { type PlayerContentType } from './components/Player'
 import {
   type DeezerAlbum,
@@ -38,6 +39,7 @@ function shuffleArray<T>(items: T[]): T[] {
 }
 
 function App() {
+  const [pathname, setPathname] = useState(() => window.location.pathname)
   const [activeTab, setActiveTab] = useState<Tab>('home')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -61,6 +63,24 @@ function App() {
   const [albumError, setAlbumError] = useState<string | null>(null)
 
   const [dominantColor, setDominantColor] = useState('#6366f1') // Cor inicial
+
+  useEffect(() => {
+    function handlePopState() {
+      setPathname(window.location.pathname)
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => {
+      window.removeEventListener('popstate', handlePopState)
+    }
+  }, [])
+
+  function navigateTo(nextPath: string) {
+    if (window.location.pathname === nextPath) return
+    window.history.pushState({}, '', nextPath)
+    setPathname(nextPath)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   useEffect(() => {
     async function loadInitial() {
@@ -164,6 +184,16 @@ function App() {
     setPlayer({ type: 'track', id })
   }
 
+  function handleSelectTrackWithNavigation(track: DeezerTrack) {
+    // If track belongs to an album, navigate to the album page
+    if (track.album && track.album.id) {
+      void openAlbum(track.album.id)
+    } else {
+      // Otherwise, just play the track
+      setPlayer({ type: 'track', id: track.id })
+    }
+  }
+
   function handleSelectAlbum(id: number) {
     void openAlbum(id)
   }
@@ -175,7 +205,14 @@ function App() {
       <Navbar
         activeTab={activeTab}
         dominantColor={dominantColor}
+        forceCompact={pathname === '/perfil'}
+        onNavigate={(path) => {
+          navigateTo(path)
+        }}
         onTabChange={(tab) => {
+          if (pathname !== '/') {
+            navigateTo('/')
+          }
           setActiveTab(tab)
           setSearchTerm('')
           setTracksResult(null)
@@ -185,7 +222,12 @@ function App() {
           setAlbumError(null)
           setAlbumLoading(false)
         }}
-        onSearch={handleSearch}
+        onSearch={(term) => {
+          if (pathname !== '/') {
+            navigateTo('/')
+          }
+          void handleSearch(term)
+        }}
       />
 
       <main
@@ -193,7 +235,15 @@ function App() {
           isPlayerVisible ? 'app-main app-main-with-player' : 'app-main'
         }
       >
-        {selectedAlbum || albumLoading || albumError ? (
+        {pathname === '/perfil' ? (
+          <ProfilePage
+            artists={topArtists}
+            onNavigateHome={() => {
+              navigateTo('/')
+              setActiveTab('home')
+            }}
+          />
+        ) : selectedAlbum !== null || albumLoading || albumError !== null ? (
           <>
             {albumLoading && (
               <p className="status">Carregando álbum...</p>
@@ -269,6 +319,7 @@ function App() {
                       }
                       tracks={tracksToShow}
                       onSelect={handleSelectTrack}
+                      onTrackClick={handleSelectTrackWithNavigation}
                     />
                   </div>
                 )}

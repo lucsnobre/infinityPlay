@@ -57,6 +57,12 @@
   will-change: transform, opacity;
 }
 
+@media (max-width: 1100px) {
+  .inner {
+    padding: 150px 48px 100px;
+  }
+}
+
 .header {
   max-width: 640px;
 }

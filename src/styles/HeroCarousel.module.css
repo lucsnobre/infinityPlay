@@ -211,6 +211,29 @@
   }
 }
 
+@media (max-width: 1100px) {
+  .hero {
+    padding: 140px 48px 72px;
+  }
+
+  .content {
+    max-width: 560px;
+  }
+
+  .title {
+    font-size: 2.1rem;
+  }
+
+  .thumbnails {
+    gap: 14px;
+  }
+
+  .thumbnail {
+    width: 116px;
+    height: 78px;
+  }
+}
+
 @keyframes heroDotsIn {
   from {
     opacity: 0;

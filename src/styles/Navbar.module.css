@@ -7,13 +7,53 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 28px 170px;
+  padding: 28px clamp(16px, 8vw, 170px);
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.75), transparent);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   color: #ffffff;
   animation: navIn 650ms cubic-bezier(0.16, 1, 0.3, 1) both;
   will-change: transform, opacity;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), padding 0.6s cubic-bezier(0.16, 1, 0.3, 1), background 0.6s ease;
+}
+
+.navbar.compact {
+  transform: translateY(-20px);
+  padding: 12px clamp(16px, 8vw, 170px);
+  background: rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 1100px) {
+  .navbar {
+    padding: 24px 48px;
+  }
+
+  .navbar.compact {
+    padding: 12px 48px;
+  }
+
+  .searchOpen {
+    width: clamp(260px, 36vw, 340px);
+  }
+
+  .tabs {
+    gap: 18px;
+  }
+
+  .tab {
+    padding: 10px 22px;
+    font-size: 1.02rem;
+  }
+
+  .ctaButton {
+    margin-left: 16px;
+    padding: 12px 24px;
+    font-size: 1.02rem;
+  }
+
+  .authButtons {
+    margin-left: 16px;
+  }
 }
 
 @keyframes navIn {
@@ -39,8 +79,12 @@
   height: 95px;
   width: auto;
   display: block;
-  transition: transform 0.18s ease, filter 0.18s ease;
-  will-change: transform, filter;
+  transition: transform 0.18s ease, filter 0.18s ease, height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, filter, height;
+}
+
+.navbar.compact .logo {
+  height: 60px;
 }
 
 .logo:hover {
@@ -411,6 +455,42 @@
   100% { background-position: 0% 50%; }
 }
 
+.authButtons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: 25px;
+}
+
+.loginButton {
+  padding: 12px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  background: transparent;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.loginButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.loginButton:active {
+  transform: translateY(0);
+}
+
+.loginButton:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 2px;
+}
+
 .ctaButton::before {
   content: '';
   position: absolute;
@@ -494,6 +574,30 @@
     gap: 12px;
   }
 
+  .navbar.compact {
+    padding: 8px 16px;
+    transform: translateY(-15px);
+  }
+
+  .logo {
+    height: 60px;
+  }
+
+  .navbar.compact .logo {
+    height: 40px;
+  }
+
+  .authButtons {
+    flex-direction: column;
+    gap: 8px;
+    margin-left: 0;
+  }
+
+  .loginButton {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+
   .ctaButton {
     margin-left: 0;
   }
@@ -513,6 +617,11 @@
 @media (prefers-reduced-motion: reduce) {
   .navbar {
     animation: none;
+    transition: none;
+  }
+
+  .logo {
+    transition: none;
   }
 
   .searchSuggestions {
