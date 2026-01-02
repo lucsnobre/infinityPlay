@@ -1,3 +1,4 @@
+// API Deezer via backend local
 const DEEZER_API_BASE = '/deezer-api'
 
 async function fetchFromDeezer<T>(path: string): Promise<T> {
@@ -97,73 +98,17 @@ export async function searchAlbums(
 }
 
 export async function getTrapFunkTracks(limit = 30): Promise<DeezerTrack[]> {
-  const artistQueries = [
-    'alee',
-    'veigh',
-    'niink',
-    'mc ig',
-    'ryu, the runner',
-    'kayblack',
-    'tz da coronel',
-    'lpt zlatan',
-    'matue',
-    'teto',
-    'wiu',
-    'bradockdan',
-    'emite unico',
-  ]
-
-  const perArtistLimit = Math.min(30, limit)
-
-  const resultsArrays = await Promise.all(
-    artistQueries.map((name) => searchTracks(name, perArtistLimit)),
+  const data = await fetchFromDeezer<DeezerListResponse<DeezerTrack>>(
+    `trap-funk/tracks?limit=${limit}`,
   )
-
-  const byId = new Map<number, DeezerTrack>()
-
-  for (const list of resultsArrays) {
-    for (const track of list) {
-      if (!byId.has(track.id)) {
-        byId.set(track.id, track)
-      }
-    }
-  }
-
-  return Array.from(byId.values()).slice(0, limit)
+  return data.data
 }
 
 export async function getTrapFunkAlbums(limit = 30): Promise<DeezerAlbum[]> {
-  const artistQueries = [
-    'mc cabelinho',
-    'veigh',
-    'niink',
-    'mc ig',
-    'mc ryan sp',
-    'kayblack',
-    'tz da coronel',
-    'borges',
-    'matue',
-    'teto',
-    'wiu',
-  ]
-
-  const perArtistLimit = Math.min(30, limit)
-
-  const resultsArrays = await Promise.all(
-    artistQueries.map((name) => searchAlbums(name, perArtistLimit)),
+  const data = await fetchFromDeezer<DeezerListResponse<DeezerAlbum>>(
+    `trap-funk/albums?limit=${limit}`,
   )
-
-  const byId = new Map<number, DeezerAlbum>()
-
-  for (const list of resultsArrays) {
-    for (const album of list) {
-      if (!byId.has(album.id)) {
-        byId.set(album.id, album)
-      }
-    }
-  }
-
-  return Array.from(byId.values()).slice(0, limit)
+  return data.data
 }
 
 /**

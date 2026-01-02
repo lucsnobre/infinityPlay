@@ -7,10 +7,10 @@ export default defineConfig({
   server: {
     proxy: {
       '/deezer-api': {
-        target: 'https://api.deezer.com',
+        target: 'http://localhost:3000',
         changeOrigin: true,
-        secure: true,
-        rewrite: (path) => path.replace(/^\/deezer-api/, ''),
+        secure: false,
+        rewrite: (path) => path.replace(/^\/deezer-api/, '/deezer-api'),
       },
       '/api': {
         target: 'http://localhost:3000',
